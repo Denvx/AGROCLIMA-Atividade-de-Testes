@@ -14,24 +14,30 @@ app.use(express.static(path.join(__dirname, "../frontend")));
 app.get("/irrigation", async (req, res) => {
     const { lat, lon } = req.query;
 
+    if (!lat || !lon) {
+        return res.status(400).json({ erro: "Parâmetros lat e lon são obrigatórios" });
+    }
+
     try {
         const weather = await getWeather(lat, lon);
         const advice = getIrrigationAdvice(weather.temperature);
 
         
         res.json({
-            temp: weather.temp,
+            temperature: weather.temperature,
             advice: advice
         });
 
     } catch (error) {
         
-        res.json({ erro: "falha interna" });
+        res.status(500).json({ erro: "falha interna" });
     }
 });
 
-app.listen(3000, () => {
-    console.log("Servidor rodando na porta 3000");
-});
+if (process.env.NODE_ENV !== "test") {
+    app.listen(3000, () => {
+        console.log("Servidor rodando na porta 3000");
+    });
+}
 
 module.exports = app;

@@ -7,6 +7,6 @@ module.exports = async function getWeather(lat, lon) {
 
   
     return {
-        temperature: response.data.current.temperature
+        temperature: response.data.current_weather.temperature
     };
 };
